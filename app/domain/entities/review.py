@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from datetime import datetime
 from typing import Optional
-from domain.enums import ReviewStatus
+from app.domain.enum import ReviewStatus
 
 @dataclass
 class Review:

@@ -1,7 +1,7 @@
 from sqlalchemy import ForeignKey, Integer, DateTime
 from sqlalchemy.orm import Mapped, mapped_column
 from datetime import datetime
-from app.db.base import Base
+from app.repositories import Base
 
 
 class Rating(Base):

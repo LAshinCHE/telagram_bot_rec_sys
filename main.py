@@ -1,9 +1,15 @@
-from fastapi import FastAPI
+from app.repositories.models import * 
+from app.repositories.database import engine, Base 
 
-app = FastAPI()
+def main():
+    print("Starting application")
 
-@app.get("/")
-def hello_index():
-    return {
-        "message": "Hello, index!",
-    }
+    print("Creating databses tables...")
+    Base.metadata.create_all(bind=engine)
+    print("Databases tables create!!!!")
+
+    
+    pass
+
+if __name__ == '__main__':
+    main()

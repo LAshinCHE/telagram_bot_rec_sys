@@ -1,7 +1,7 @@
 from sqlalchemy import String, ForeignKey, Integer, DateTime
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from datetime import datetime
-from app.db.base import Base
+from app.repositories import Base
 
 
 class Place(Base):
