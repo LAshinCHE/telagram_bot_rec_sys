@@ -1,5 +1,6 @@
-from fastapi import FastAPI
+from .interfaces.repositories.place_repo import PlaceRepositoryI
+from .interfaces.repositories.place_repo import PlaceRepositoryI
 
-def create_service() -> FastAPI:
-    app = FastAPI()
-    return app
+class Servce():
+    def __init__(self, place_repo: PlaceRepositoryI, )
+    pass

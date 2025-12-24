@@ -1,12 +1,10 @@
-from abc import ABC, abstractmethod
+from app.service.interfaces.repositories.place_repo import PlaceRepository
 from domain.entities.place import Place
 
-class PlaceRepositoryI(ABC):
+class PlaceRepository(PlaceRepository):
 
-    @abstractmethod
     def save(self, place: Place) -> Place:
         pass
 
-    @abstractmethod
     def search(self, filters: dict) -> list[Place]:
         pass

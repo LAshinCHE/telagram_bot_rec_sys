@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from domain.entities.review import Review
 
-class ReviewRepository(ABC):
+class ReviewRepositoryI(ABC):
 
     @abstractmethod
     def exists_by_user(self, user_id: int, place_id: int) -> bool:
