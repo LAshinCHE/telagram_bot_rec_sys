@@ -1,10 +1,5 @@
 from fastapi import APIRouter
-from fastapi import FastAPI
+from app.api.routes import healthcheck
 
-def create_service() -> FastAPI:
-    app = FastAPI()
-    return app
-
-def create_router() -> APIRouter:
-    router = APIRouter()
-    return router
+api_router = APIRouter()
+api_router.include_router(healthcheck.router)
