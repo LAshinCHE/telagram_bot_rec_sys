@@ -1,18 +1,22 @@
-from app.repositories.models import * 
-from app.repositories.database import engine, Base 
+from app.db.models import *
+from app.db.database import engine, Base
 from fastapi import FastAPI
 from app.api.router import api_router
+import uvicorn
 
 app = FastAPI(title="Places API")
 
 app.include_router(api_router)
 
-def main():
-    print("Starting application")
+print("Creating database tables...")
+Base.metadata.create_all(bind=engine)
+print("Database tables created!")
 
-    print("Creating databses tables...")
-    Base.metadata.create_all(bind=engine)
-    print("Databases tables create!!!!")
-
-if __name__ == '__main__':
-    main()
+if __name__ == "__main__":
+    print("Starting FastAPI server...")
+    uvicorn.run(
+        "main:app",           
+        host="0.0.0.0",       
+        port=8000,
+        reload=True          
+    )

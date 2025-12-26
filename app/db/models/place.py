@@ -1,7 +1,7 @@
-from sqlalchemy import String, ForeignKey, Integer, DateTime
+from sqlalchemy import String, ForeignKey, Integer, DateTime, text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from datetime import datetime
-from app.repositories import Base
+from app.db.database import Base
 
 
 class Place(Base):
@@ -15,8 +15,11 @@ class Place(Base):
     price_level: Mapped[int | None]
     status: Mapped[str]  # pending|active|rejected|archived
     created_by: Mapped[int] = mapped_column(ForeignKey("users.id"))
-    created_at: Mapped[datetime] = mapped_column(default=datetime.utcnow)
-    updated_at: Mapped[datetime | None]
+    created_at: Mapped[datetime] = mapped_column(default=text("TIMEZOEN('utc', now())"))
+    updated_at: Mapped[datetime | None] = mapped_column(
+        server_default=text("TIMEZONE('utc', now())"),
+        onupdate = datetime.now,
+        )
 
     tags = relationship("Tag", secondary="place_tags", back_populates="places")
     photos = relationship("PlacePhoto", cascade="all, delete")
@@ -50,4 +53,4 @@ class PlacePhoto(Base):
     place_id: Mapped[int] = mapped_column(ForeignKey("places.id", ondelete="CASCADE"))
     url: Mapped[str]
     uploaded_by: Mapped[int]
-    created_at: Mapped[datetime] = mapped_column(default=datetime.utcnow)
+    created_at: Mapped[datetime] = mapped_column(default=datetime.now)

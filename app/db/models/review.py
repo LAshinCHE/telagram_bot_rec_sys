@@ -1,7 +1,7 @@
-from sqlalchemy import ForeignKey, Integer, DateTime
+from sqlalchemy import ForeignKey, Integer, DateTime, text
 from sqlalchemy.orm import Mapped, mapped_column
 from datetime import datetime
-from app.repositories import Base
+from app.db.database import Base
 
 
 class Rating(Base):
@@ -15,7 +15,11 @@ class Rating(Base):
     )
     rating: Mapped[int]
     created_at: Mapped[datetime] = mapped_column(default=datetime.utcnow)
-    updated_at: Mapped[datetime | None]
+    updated_at: Mapped[datetime | None] = mapped_column(
+        server_default=text("TIMEZONE('utc', now())"),
+        onupdate = datetime.now,
+        )
+
 
 
 class Review(Base):

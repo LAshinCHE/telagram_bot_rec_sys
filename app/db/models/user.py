@@ -1,7 +1,7 @@
 from sqlalchemy import String, ForeignKey, DateTime
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from datetime import datetime
-from app.repositories import Base
+from app.db.database import Base
 
 
 class User(Base):
@@ -11,7 +11,7 @@ class User(Base):
     email: Mapped[str] = mapped_column(String, unique=True, nullable=False)
     password_hash: Mapped[str]
     name: Mapped[str | None]
-    created_at: Mapped[datetime] = mapped_column(default=datetime.utcnow)
+    created_at: Mapped[datetime] = mapped_column(default=datetime.now)
 
     roles = relationship("UserRole", back_populates="user", cascade="all, delete")
 

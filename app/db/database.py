@@ -1,8 +1,8 @@
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker, DeclarativeBase
-from app.settings import settings
+from app.setings import settings
 
-DATABASE_URL = settings.DATABASE_URL_psycopg()
+DATABASE_URL = settings.DATABASE_URL_psycopg
 
 engine = create_engine(
     DATABASE_URL,

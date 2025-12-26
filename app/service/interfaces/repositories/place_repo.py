@@ -8,5 +8,9 @@ class PlaceRepositoryI(ABC):
         pass
 
     @abstractmethod
+    def get_by_id(self, id: int) -> Place:
+        pass
+
+    @abstractmethod
     def search(self, filters: dict) -> list[Place]:
         pass
