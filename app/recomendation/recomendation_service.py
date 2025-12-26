@@ -13,11 +13,6 @@ class Recomendation:
         self.model = joblib.load(name_model)
         self.df = pd.read_json(name_rating_json)
     
-    def __is_cold_start(self, place_id: int) -> bool:
-        # Если у места меньше 5 оценок, это холодный старт
-        place_ratings = self.df[self.df['place_id'] == place_id]
-        return len(place_ratings) < 5
-    
     def __predict_rating(self, user_id: int, place_id: int) -> int:
         return self.model.predict(user_id, place_id).est
     
@@ -33,6 +28,9 @@ class Recomendation:
                 {
                     'id': place['id'],
                     'name': place['name'],
+                    'description': place['description'],
+                    'price_level': place['price_level'],
+                    'city': place['city'],
                     'predicted_rating': None,
                     'rating_avg': place['rating_avg'],
                     'rating_cnt': place['rating_cnt']
@@ -46,11 +44,14 @@ class Recomendation:
 
         for place in candidates:
             place_id = place['id']
-            if self.__is_cold_start(place_id):
+            if place['rating_cnt'] < 5:
                 # Если холодный старт, сортируем по популярности
                 cold_start_places.append({
                     'id': place_id,
                     'name': place['name'],
+                    "description": place['description'],
+                    'price_level': place['price_level'],
+                    'city': place['city'],
                     'predicted_rating': None,  # нет предсказания, только сортировка по популярности
                     'rating_avg': place['rating_avg'],
                     'rating_cnt': place['rating_cnt']
@@ -61,6 +62,9 @@ class Recomendation:
                 predicted_places.append({
                     'id': place_id,
                     'name': place['name'],
+                    "description": place['description'],
+                    'price_level': place['price_level'],
+                    'city': place['city'],
                     'predicted_rating': predicted_rating,
                     'rating_avg': place['rating_avg'],
                     'rating_cnt': place['rating_cnt']
