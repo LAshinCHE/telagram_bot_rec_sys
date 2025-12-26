@@ -7,10 +7,10 @@ from app.api.schemas.recommendations import (
     RecommendationResponse,
 )
 from app.service.use_cases.llm.recommendation import RecommendationService
-from db.session import get_db
-from db.repositories.place import PlaceRepository
+from app.db.session import get_db
+from app.db.repositories.place import PlaceRepository
 from app.llm.llm_entities import LLM_Entities
-from app.setings import settings
+from app.settings import settings
 
 router = APIRouter(prefix="/recommendations", tags=["recommendations"])
 

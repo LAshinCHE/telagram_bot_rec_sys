@@ -12,7 +12,7 @@ class Config(BaseSettings):
     DB_USER: str
     DB_PASS: str
     DB_NAME: str
-    BOT_TOCKEN: str
+    BOT_TOKEN: str
     LOG_LEVEL: str
 
     @property

@@ -11,3 +11,7 @@ class Forbidden(ApplicationError):
 class NotFound(ApplicationError):
     """Объект не найден"""
     pass
+
+class BusinessError(ApplicationError):
+    """Объект не найден"""
+    pass

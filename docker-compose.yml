@@ -22,11 +22,18 @@ services:
     depends_on:
       - db
     environment:
+      BOT_TOKEN: 8327134575:AAGQx8zkZd3tO6L25e5_0h3y_2Y0S_JrK3A
+      LOG_LEVEL: INFO
+      APP_PORT: 8000
       DB_HOST: db
       DB_PORT: 5432
       DB_USER: postgres
       DB_PASS: postgres
       DB_NAME: app_db
+      LM_STUDIO_URL: http://127.0.0.1:1234/v1
+      API_KEY: lm-studio
+      ALLOWED_TAGS: ALLOWED_TAGS
+      DEFAULT_MODEL: openai/gpt-oss-20b
     volumes:
       - .:/app
     restart: unless-stopped

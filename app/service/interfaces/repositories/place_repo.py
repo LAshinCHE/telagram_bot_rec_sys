@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from domain.entities.place import Place
+from app.domain.entities.place import Place
 
 class PlaceRepositoryI(ABC):
 

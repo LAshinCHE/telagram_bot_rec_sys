@@ -11,7 +11,7 @@ class PlaceStatus(str, Enum):
     REJECTED = "rejected"
     ARCHIVE = "archive"
 
-class UserRolle(str, Enum):
+class UserRole(str, Enum):
     ADMIN = "admin"
     MODERATOR = "moderator"
     USER = "user"

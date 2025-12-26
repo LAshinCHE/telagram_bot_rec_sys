@@ -2,7 +2,8 @@ from sqlalchemy import String, ForeignKey, DateTime
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from datetime import datetime
 from app.db.database import Base
-
+from enum import Enum
+from app.domain.enum import UserRole
 
 class User(Base):
     __tablename__ = "users"
@@ -13,7 +14,8 @@ class User(Base):
     name: Mapped[str | None]
     created_at: Mapped[datetime] = mapped_column(default=datetime.now)
 
-    role = mapped_column()
+    role = mapped_column(String(20), nullable=False, default=UserRole.USER)
+
 
 
 class UserRole(Base):
@@ -25,3 +27,4 @@ class UserRole(Base):
     role: Mapped[str] = mapped_column(primary_key=True)
 
     user = relationship("User", back_populates="roles")
+

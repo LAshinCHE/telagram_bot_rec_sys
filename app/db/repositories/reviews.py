@@ -1,7 +1,7 @@
 from app.service.interfaces.repositories.review_repo import ReviewRepositoryI
 from sqlalchemy.orm import Session
 from app.db.models import Review as ReviewModel
-from domain.entities.review import Review as ReviewEntity
+from app.domain.entities.review import Review as ReviewEntity
 from app.domain.enum import ReviewStatus
 
 class ReviewRepository(ReviewRepositoryI):

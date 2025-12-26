@@ -1,6 +1,6 @@
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker, DeclarativeBase
-from app.settings import settings  # ← опечатка setings → settings
+from app.settings import settings
 
 DATABASE_URL = settings.DATABASE_URL_psycopg
 

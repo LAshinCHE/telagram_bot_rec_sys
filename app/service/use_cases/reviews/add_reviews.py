@@ -1,7 +1,7 @@
 
 from domain.entities.review import Review
-from domain.enums import ReviewStatus
-from application.exceptions import BusinessError
+from app.domain.enum import ReviewStatus
+from app.exceptions.exceptions import BusinessError
 
 class AddReviewUseCase:
 

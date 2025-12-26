@@ -1,7 +1,7 @@
 from typing import List
-from db.repositories.reviews import ReviewRepository
+from app.db.repositories.reviews import ReviewRepository
 from app.recommendation.recommendation_service import Recommendation
-from app.domain.entities.place import Places
+from app.domain.entities.place import Place
 from app.domain.entities.review import Review
 from app.db.models.place import Place
 from app.llm.llm_entities import LLM_Entities
@@ -28,7 +28,7 @@ class RecommendationService:
         df = self.recommendation_repo.get_reviews()
         self.recommendation.train_model("svd_model.pkl", df)
 
-    def get_rank_place(self, user_id: int, candidates: list[Places]) -> list[Places]:
+    def get_rank_place(self, user_id: int, candidates: list[Place]) -> list[Place]:
         '''
         :param user_id: id пользователя, для которого нужно предложить места.
         :type user_id: int

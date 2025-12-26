@@ -1,6 +1,6 @@
 from datetime import datetime
-from domain.entities.place import Place
-from domain.enum import PlaceStatus
+from app.domain.entities.place import Place
+from app.domain.enum import PlaceStatus
 
 class CreatePlaceUseCase:
 
