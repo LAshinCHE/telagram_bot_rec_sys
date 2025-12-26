@@ -2,7 +2,7 @@ import json
 from typing import Any, Dict, List
 from openai import OpenAI 
 
-class Entities:
+class LLM_Entities:
     def __init__(
         self,
         LM_STUDIO_URL: str,
@@ -216,7 +216,7 @@ if __name__ == "__main__":
         "pet-friendly","миска для воды","можно с собакой",
     ]
 
-    entities = Entities(
+    entities = LLM_Entities(
         LM_STUDIO_URL="http://127.0.0.1:1234/v1",
         API_KEY="lm-studio",
         ALLOWED_TAGS=ALLOWED_TAGS,

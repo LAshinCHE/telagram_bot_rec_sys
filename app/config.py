@@ -2,6 +2,10 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Config(BaseSettings):
+    LM_STUDIO_URL : str
+    API_KEY : str
+    ALLOWED_TAGS: str
+    DEFAULT_MODEL: str
     APP_PORT: str
     DB_HOST: str
     DB_PORT: int

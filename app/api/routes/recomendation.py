@@ -1,32 +1,41 @@
+# app/api/routes/recommendations.py
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
-from app.service.use_cases.llm.recommendation import RecomendationService
+from app.api.schemas.recommendation import (
+    RecommendationRequest,
+    RecommendationResponse,
+)
+from app.service.use_cases.recommendation import RecommendationService
 from db.session import get_db
-from db.repositories.reviews import ReviewRepository
-from app.recommendation.recommendation_service import Recomendation
+from db.repositories.place import PlaceRepository
+from app.llm.llm_entities import LLM_Entities
+from app.settings import settings
 
 router = APIRouter(prefix="/recommendations", tags=["recommendations"])
 
 
 def get_recommendation_service(
     db: Session = Depends(get_db),
-) -> RecomendationService:
-    repo = ReviewRepository(db)
-    model = Recomendation()
-    return RecomendationService(
-        recomendation_repo=repo,
-        recomendation=model,
+) -> RecommendationService:
+    place_repo = PlaceRepository(db)
+
+    llm = LLM_Entities(
+        LM_STUDIO_URL=settings.LM_STUDIO_URL,
+        API_KEY=settings.LM_API_KEY,
+        ALLOWED_TAGS=settings.ALLOWED_TAGS,
+        DEFAULT_MODEL=settings.LLM_MODEL,
+    )
+
+    return RecommendationService(
+        place_repo=place_repo,
+        llm_entities=llm,
     )
 
 
-@router.post("/")
-def get_recommendations(
-    user_id: int,
-    place_ids: list[int],
-    service: RecomendationService = Depends(get_recommendation_service),
+@router.post("/", response_model=RecommendationResponse)
+def recommend_places(
+    data: RecommendationRequest,
+    service: RecommendationService = Depends(get_recommendation_service),
 ):
-    return service.get_rank_place(
-        user_id=user_id,
-        place_ids=place_ids,
-    )
+    return service.recommend(data.query, data.user_id)

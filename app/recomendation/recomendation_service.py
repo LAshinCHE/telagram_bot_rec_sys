@@ -22,7 +22,7 @@ class Recomendation:
         return sorted(candidates, key=lambda x: (x['rating_cnt'], x['rating_avg']), reverse=True)
 
     
-    def rank_places(self, user_id: int, candidates: List[dict], count_rating_user: int) -> List[Place]:
+    def rank_places(self, user_id: int, candidates: List[dict], count_rating_user: int) -> List[dict]:
         if count_rating_user < 5:
             cold_candidates = [
                 {

@@ -13,7 +13,7 @@ class User(Base):
     name: Mapped[str | None]
     created_at: Mapped[datetime] = mapped_column(default=datetime.now)
 
-    roles = relationship("UserRole", back_populates="user", cascade="all, delete")
+    role = mapped_column()
 
 
 class UserRole(Base):

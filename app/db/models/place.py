@@ -45,12 +45,14 @@ class PlaceTag(Base):
         ForeignKey("tags.id", ondelete="CASCADE"), primary_key=True
     )
 
+    
+class PlaceStats(Base):
+    __tablename__ = "place_stats"
 
-class PlacePhoto(Base):
-    __tablename__ = "place_photos"
-
-    id: Mapped[int] = mapped_column(primary_key=True)
-    place_id: Mapped[int] = mapped_column(ForeignKey("places.id", ondelete="CASCADE"))
-    url: Mapped[str]
-    uploaded_by: Mapped[int]
-    created_at: Mapped[datetime] = mapped_column(default=datetime.now)
+    place_id: Mapped[int] = mapped_column(
+        ForeignKey("places.id", ondelete="CASCADE"), primary_key=True
+    )
+    rating_avg: Mapped[float | None]
+    rating_cnt: Mapped[int]
+    reviews_cnt: Mapped[int]
+    updated_at: Mapped[datetime]

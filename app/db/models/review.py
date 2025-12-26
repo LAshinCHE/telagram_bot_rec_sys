@@ -34,15 +34,3 @@ class Review(Base):
     moderated_by: Mapped[int | None]
     moderated_at: Mapped[datetime | None]
     created_at: Mapped[datetime] = mapped_column(default=datetime.utcnow)
-
-
-class PlaceStats(Base):
-    __tablename__ = "place_stats"
-
-    place_id: Mapped[int] = mapped_column(
-        ForeignKey("places.id", ondelete="CASCADE"), primary_key=True
-    )
-    rating_avg: Mapped[float | None]
-    rating_cnt: Mapped[int]
-    reviews_cnt: Mapped[int]
-    updated_at: Mapped[datetime]
