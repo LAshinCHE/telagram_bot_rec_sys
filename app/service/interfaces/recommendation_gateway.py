@@ -1,10 +1,10 @@
 from abc import ABC, abstractmethod
 from typing import Any
 
-class RecomendationGateway(ABC):
+class RecommendationGateway(ABC):
 
     @abstractmethod
-    def get_recomendation(self, euser_id: int, candidates: list[dict]) -> list[dict]:
+    def get_recommendation(self, euser_id: int, candidates: list[dict]) -> list[dict]:
         pass
 
     @abstractmethod

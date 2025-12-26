@@ -1,6 +1,6 @@
 from typing import List
 from db.repositories.reviews import ReviewRepository
-from app.recomendation.recomendation_service import Recomendation
+from app.recommendation.recommendation_service import Recommendation
 from app.domain.entities.place import Places
 from app.domain.entities.review import Review
 from app.db.models.place import Place
@@ -8,25 +8,25 @@ from app.llm.llm_entities import LLM_Entities
 from app.llm.llm_generation_answer import LLM_Generation
 from app.db.repositories.place import PlaceRepository
 
-class RecomendationService:
+class RecommendationService:
     def __init__(
         self,
-        recomendation_repo: ReviewRepository,
+        recommendation_repo: ReviewRepository,
         place_repo: PlaceRepository,
-        recomendation: Recomendation,
+        recommendation: Recommendation,
         llm_entities: LLM_Entities,
         generation_llm: LLM_Generation
     ):
-        self.recomendation_repo = recomendation_repo
+        self.recommendation_repo = recommendation_repo
         self.place_repo = place_repo
-        self.recomendation = recomendation
+        self.recommendation = recommendation
         self.llm_entities = llm_entities
         self.generation_llm = generation_llm
 
         
     def train_model(self, name_model: str):
-        df = self.recomendation_repo.get_reviews()
-        self.recomendation.train_model("svd_model.pkl", df)
+        df = self.recommendation_repo.get_reviews()
+        self.recommendation.train_model("svd_model.pkl", df)
 
     def get_rank_place(self, user_id: int, candidates: list[Places]) -> list[Places]:
         '''
@@ -35,8 +35,8 @@ class RecomendationService:
         :param candidates: места отобранные по тегам
         :type candidates: list[dict]
         '''
-        count_rating_user = self.recomendation_repo.get_count_rating_user(user_id)
-        ranking_places = self.recomendation.rank_places(user_id, candidates, count_rating_user)
+        count_rating_user = self.recommendation_repo.get_count_rating_user(user_id)
+        ranking_places = self.recommendation.rank_places(user_id, candidates, count_rating_user)
         return ranking_places
     
     def recommend(self, user_query: str, user_id : int) -> dict:
@@ -50,7 +50,7 @@ class RecomendationService:
 
         candidates = self.place_repo.make_
 
-        ranked = self.recomendation.rank_places(user_id, places)
+        ranked = self.recommendation.rank_places(user_id, places)
 
         ans = self.generation_llm.generation(ranked)
 

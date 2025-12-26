@@ -8,7 +8,7 @@ from surprise import accuracy
 from surprise.model_selection import train_test_split
 from app.domain.entities.place import Place
 
-class Recomendation:
+class Recommendation:
     def __init__(self, name_model: str, name_rating_json: str):
         self.model = joblib.load(name_model)
         self.df = pd.read_json(name_rating_json)
@@ -120,7 +120,7 @@ if __name__ == "__main__":
     user_id = uuid.uuid4()
     model_name = 'svd_model.pkl'
     rating_name = 'ratings_data.json'
-    rec = Recomendation(model_name, rating_name)
+    rec = Recommendation(model_name, rating_name)
     ranked_places = rec.rank_places(user_id, candidates, 2)
     with open('Recomndation_output.json', 'w', encoding='utf-8') as f:
         json.dump(ranked_places, f, ensure_ascii=False, indent=2)

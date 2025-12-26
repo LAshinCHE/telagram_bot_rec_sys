@@ -8,5 +8,5 @@ class LLMGateway(ABC):
         pass
 
     @abstractmethod
-    def generate_answer(self, json_recomendations: str) -> dict[str, Any]:
+    def generate_answer(self, json_recommendations: str) -> dict[str, Any]:
         pass

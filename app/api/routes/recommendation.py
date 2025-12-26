@@ -2,15 +2,15 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
-from app.api.schemas.recommendation import (
+from app.api.schemas.recommendations import (
     RecommendationRequest,
     RecommendationResponse,
 )
-from app.service.use_cases.recommendation import RecommendationService
+from app.service.use_cases.llm.recommendation import RecommendationService
 from db.session import get_db
 from db.repositories.place import PlaceRepository
 from app.llm.llm_entities import LLM_Entities
-from app.settings import settings
+from app.setings import settings
 
 router = APIRouter(prefix="/recommendations", tags=["recommendations"])
 
