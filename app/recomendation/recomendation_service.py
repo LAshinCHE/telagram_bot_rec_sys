@@ -3,6 +3,9 @@ from surprise import SVD, Reader, Dataset
 import pandas as pd
 import uuid
 import joblib
+import json
+from surprise import accuracy
+from surprise.model_selection import train_test_split
 
 class Recomendation:
     def __init__(self, name_model: str, name_rating_json: str):
@@ -17,25 +20,14 @@ class Recomendation:
     def __predict_rating(self, user_id: int, place_id: int) -> int:
         return self.model.predict(user_id, place_id).est
     
-    def __get_user_rating_count(self, user_id: int) -> int:
-        '''
-        Здесь должно быть обращение в бд, чтобы узнать
-        кол-во отзывов у пользователя
-        '''
-        pass
-    
-    def __is_user_cold_start(self, user_id: int, min_interactions=5) -> bool:
-        user_rating_count = self.__get_user_rating_count(user_id)
-        return user_rating_count < min_interactions
-    
     # Функция для сортировки по популярности (если холодный старт)
     def __sort_by_popularity(self, candidates: dict[str, any]) -> dict[str, any]:
         # Сортировка по количеству отзывов, затем по среднему рейтингу
         return sorted(candidates, key=lambda x: (x['rating_cnt'], x['rating_avg']), reverse=True)
 
     
-    def rank_places(self, user_id: int, candidates: List[dict]) -> List[dict[int, float]]:
-        if self.__is_user_cold_start(user_id):
+    def rank_places(self, user_id: int, candidates: List[dict], count_rating_user: int) -> List[dict[int, float]]:
+        if count_rating_user < 5:
             cold_candidates = [
                 {
                     'id': place['id'],
@@ -78,6 +70,33 @@ class Recomendation:
 
         ranked_places = predicted_places + cold_start_places
         return ranked_places
+        
+
+    def train_model(self, name_model: str, df):
+        '''
+        Docstring для train_model
+        :param name_model: название модели для сохранения и загрузки
+        :type name_model: str
+        :param df: данные для обучения модели
+        '''
+
+
+        reader = Reader(rating_scale=(1, 5))
+        data = Dataset.load_from_df(df[['user_id', 'place_id', 'rating']], reader)
+
+
+        # Разделение данных на тренировочную и тестовую выборки
+        trainset, testset = train_test_split(data, test_size=0.2)
+
+        # Обучаем модель SVD
+        model = SVD()
+        model.fit(trainset)
+
+        # Оценка точности на тестовых данных
+        predictions = model.test(testset)
+        print(f"RMSE: {accuracy.rmse(predictions)}")
+
+        joblib.dump(model, name_model)
 
 if __name__ == "__main__":
     # Пример кандидатов (мест)
@@ -97,6 +116,6 @@ if __name__ == "__main__":
     model_name = 'svd_model.pkl'
     rating_name = 'ratings_data.json'
     rec = Recomendation(model_name, rating_name)
-    ranked_places = rec.rank_places(user_id, candidates)
+    ranked_places = rec.rank_places(user_id, candidates, 2)
     with open('Recomndation_output.json', 'w', encoding='utf-8') as f:
         json.dump(ranked_places, f, ensure_ascii=False, indent=2)
