@@ -8,5 +8,5 @@ class ReviewRepositoryI(ABC):
         pass
 
     @abstractmethod
-    def save(self, review: Review) -> Review:
+    def get_reviews(self) -> list[Review]:
         pass

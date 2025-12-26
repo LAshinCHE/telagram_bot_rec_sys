@@ -1,6 +1,7 @@
 from db.repositories.reviews import ReviewRepository
 from app.recomendation.recomendation_service import Recomendation
 from app.domain.entities.place import Places
+from app.domain.entities.review import Review
 
 class  RecomendationService:
     def __init__(self, recomendation_repo: ReviewRepository, recomendation : Recomendation):
@@ -19,4 +20,5 @@ class  RecomendationService:
         :type candidates: list[dict]
         '''
         count_rating_user = self.recomendation_repo.get_count_rating_user(user_id)
-        self.recomendation.rank_place()
+        ranking_places = self.recomendation.rank_places(user_id, candidates, count_rating_user)
+        return ranking_places

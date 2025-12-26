@@ -6,6 +6,7 @@ import joblib
 import json
 from surprise import accuracy
 from surprise.model_selection import train_test_split
+from app.domain.entities.place import Place
 
 class Recomendation:
     def __init__(self, name_model: str, name_rating_json: str):
@@ -26,7 +27,7 @@ class Recomendation:
         return sorted(candidates, key=lambda x: (x['rating_cnt'], x['rating_avg']), reverse=True)
 
     
-    def rank_places(self, user_id: int, candidates: List[dict], count_rating_user: int) -> List[dict[int, float]]:
+    def rank_places(self, user_id: int, candidates: List[dict], count_rating_user: int) -> List[Place]:
         if count_rating_user < 5:
             cold_candidates = [
                 {
