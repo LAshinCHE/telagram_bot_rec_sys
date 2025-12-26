@@ -29,13 +29,6 @@ class LLM_Generation:
         Никакого Markdown, списков, пояснений, комментариев или текста вокруг JSON. Только чистый JSON.
         """
     
-    def __get_place_descriptions_from_db(place_ids: List[str]) -> Dict[str, Dict[str, Any]]:
-        """
-        Получает описания мест из базы данных по их ID.
-        Возвращает словарь {place_id: {name, description, city, price_level, rating_avg, rating_cnt, reviews}}
-        """
-        return "bb"
-    
     def __build_user_prompt(self, places_data: List[Dict[str, Any]]) -> str:
         """
         Создает промпт для LLM на основе данных о местах.
@@ -59,7 +52,7 @@ class LLM_Generation:
         user_prompt = self.__build_user_prompt(places_data)
 
         resp = self.client.chat.completions.create(
-            model=self.model,
+            model=self.MODEL_NAME,
             messages=[
                 {"role": "system", "content": self.SYSTEM_PROMPT},
                 {"role": "user", "content": user_prompt},
@@ -87,59 +80,19 @@ class LLM_Generation:
     
         return obj
 
-    def generation(self, file_rec_json: str) -> Dict[str, Any]:
+    def generation(self, recommended_places) -> Dict[str, Any]:
         """
         Основная функция: загружает рекомендации, получает описания из БД, генерирует ответ через LLM.
         """
-        # Загружаем рекомендованные места из JSON
-        try:
-            with open('Recomndation_1_output.json', 'r', encoding='utf-8') as f:
-                recommendations_data = json.load(f)
-        except FileNotFoundError:
-            print("Ошибка: файл Recomndation_1_output.json не найден")
-            return
-        except json.JSONDecodeError as e:
-            print(f"Ошибка при чтении JSON: {e}")
-            return
-        
-        recommended_places = recommendations_data.get('recommended_places', [])
-
-        if not recommended_places:
-            print("Нет рекомендованных мест для обработки")
-            return
-        
-        place_ids = [place['id'] for place in recommended_places]
-
-        db_descriptions = self.__get_place_descriptions_from_db(place_ids)
-
-        # Объединяем данные из рекомендаций с данными из БД
-        places_data = []
-        for place in recommended_places:
-            place_id = place['id']
-            db_info = db_descriptions.get(place_id, {})
-
-            # Объединяем данные: приоритет у данных из БД, но используем данные из рекомендаций если БД нет
-            place_info = {
-                'id': place_id,
-                'name': db_info.get('name') or place.get('name', ''),
-                'description': db_info.get('description', ''),
-                'city': db_info.get('city', ''),
-                'price_level': db_info.get('price_level'),
-                'rating_avg': db_info.get('rating_avg') or place.get('rating_avg'),
-                'rating_cnt': db_info.get('rating_cnt') or place.get('rating_cnt', 0),
-                'predicted_rating': place.get('predicted_rating'),
-                'reviews': db_info.get('reviews', [])
-            }
-            places_data.append(place_info)
         
         try:
-            answer_result = self.__generate_answer_openai(places_data)
+            answer_result = self.__generate_answer_openai(recommended_places)
 
             # Сохраняем результат в JSON
             output_data = {
                 "answer": answer_result.get("answer", ""),
-                "places_count": len(places_data),
-                "places": places_data
+                "places_count": len(recommended_places),
+                "places": recommended_places
             }
 
             return output_data
@@ -154,7 +107,20 @@ if __name__ == "__main__":
     MODEL_NAME = "openai/gpt-oss-20b"
     gen = LLM_Generation(LM_STUDIO_URL=LM_STUDIO_URL, API_KEY=API_KEY, MODEL_NAME=MODEL_NAME)
 
-    output_data = gen.generation("Recomndation_1_output.json")
+    candidates = [
+        {"id":"22222222-2222-2222-2222-222222222222","name":"Dessert House","description":"десерты и латте","city":"Moscow","price_level":3,"rating_avg":4.8,"rating_cnt":15},
+        {"id":"33333333-3333-3333-3333-333333333333","name":"Noisy Coffee","description":"кофе и латте, громко","city":"Moscow","price_level":2,"rating_avg":4.7,"rating_cnt":300},
+        {"id":"11111111-1111-1111-1111-111111111111","name":"Coffee Lab","description":"спешелти кофе, латте","city":"Moscow","price_level":2,"rating_avg":4.6,"rating_cnt":120},
+        {"id":"44444444-4444-4444-4444-444444444444","name":"Latte & Co","description":"латте, тихо","city":"Moscow","price_level":3,"rating_avg":4.5,"rating_cnt":80},
+        {"id":"55555555-5555-5555-5555-555555555555","name":"Central Roasters","description":"спешелти кофе, тихо","city":"Moscow","price_level":3,"rating_avg":4.4,"rating_cnt":40},
+        {"id":"66666666-6666-6666-6666-666666666666","name":"Art Cafe","description":"кофе и десерты","city":"Moscow","price_level":2,"rating_avg":4.3,"rating_cnt":60},
+        {"id":"77777777-7777-7777-7777-777777777777","name":"Morning Cup","description":"латте и выпечка","city":"Moscow","price_level":2,"rating_avg":4.1,"rating_cnt":20},
+        {"id":"88888888-8888-8888-8888-888888888888","name":"Hidden Yard","description":"тихая кофейня, латте","city":"Moscow","price_level":2,"rating_avg":4.8,"rating_cnt":5},
+        {"id":"99999999-9999-9999-9999-999999999999","name":"Library Coffee","description":"тихо, много места, латте","city":"Moscow","price_level":2,"rating_avg":4.6,"rating_cnt":200},
+        {"id":"aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa","name":"Brew & Talk","description":"кофе, разговоры","city":"Moscow","price_level":2,"rating_avg":4.2,"rating_cnt":35}
+    ]
+
+    output_data = gen.generation(candidates)
 
     output_file = "Answer_output.json"
 
