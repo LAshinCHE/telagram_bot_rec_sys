@@ -57,7 +57,7 @@ def get_recommendation_service(
     )
 
 
-@router.post("/", response_model=RecommendationResponse)
+@router.post("/")
 def recommend_places(
     data: RecommendationRequest,
     service: RecommendationService = Depends(get_recommendation_service),

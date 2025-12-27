@@ -26,5 +26,7 @@ async def get_places(message: Message):
     finally:
         db.close()
 
-    text = "\n".join(p["name"] for p in response["places"])
+    print(response)
+    text = response["answer"]
+    # await message.answer(response["places"])
     await message.answer(text or "Ничего не найдено")

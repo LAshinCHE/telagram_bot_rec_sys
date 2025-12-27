@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 from app.domain.entities.place import Place
+from app.db.models.place import Place as PlaceModel
 
 class PlaceRepositoryI(ABC):
 
@@ -21,4 +22,8 @@ class PlaceRepositoryI(ABC):
 
     @abstractmethod
     def get_by_id(self, place_id: int) -> Place:
+        pass
+
+    @abstractmethod
+    def add_tags(self, place_id: int, tags_ids: list[int]) -> PlaceModel:
         pass

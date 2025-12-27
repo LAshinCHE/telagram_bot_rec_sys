@@ -7,6 +7,8 @@ from app.api.schemas.place import (
     CreatePlaceResponce,
     GetPlaceRequest,
     GetPlaceResponce,
+    AddPlaceTagRequest,
+    AddPlaceTagResponse,
 )
 
 from app.service.use_cases.place.place import PlaceService
@@ -47,14 +49,34 @@ def recommend_places(
             created_by=user_id,
             created_at=datetime.now()
         )
-    return service.create_place(place=place)
+    place_id = service.create_place(place=place)
+    responce = CreatePlaceResponce(id=place_id)
+    return responce
 
-@router.get("/", response_model=GetPlaceResponce)
-def recommend_places(
-    data: GetPlaceRequest,
+@router.get("/{place_id}", response_model=GetPlaceResponce)
+def get_place_by_id(
+    place_id: int,
     user_id: int,
     service: PlaceService = Depends(get_place_service),
 ):
-    return service.get_place(data.id)
+    place = service.get_place(place_id)
+    responce = GetPlaceResponce(
+            id=place.id,
+            name=place.name,
+            city=place.city,
+            address_text=place.address_text,
+            price_level=place.price_level,
+            created_by=place.created_by
+    )
+
+    return responce
+
  
- 
+@router.post("/add_tags", response_model=AddPlaceTagResponse)
+def add_tags(
+    data: AddPlaceTagRequest,
+    user_id: int,
+    service: PlaceService = Depends(get_place_service),
+):
+    
+    return service.add_tags(data.place_id, data.list_tags_id)
