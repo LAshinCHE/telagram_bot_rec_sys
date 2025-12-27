@@ -15,7 +15,7 @@ class PlaceRepository:
         price_level: int | None = None,
         include_tags: list[str] | None = None,
         status: str = "active",
-    ) -> list[Place]:
+    ) -> list[dict]:
         """
         Поиск мест по фильтрам.
         include_tags — обязательные теги (AND логика)
