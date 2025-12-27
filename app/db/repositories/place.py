@@ -1,4 +1,4 @@
-from sqlalchemy.orm import Session, joinedload
+from sqlalchemy.orm import Session, joinedload, selectinload
 from sqlalchemy import select, func
 from app.db.models import Place as PlaceModel
 from app.db.models.place import Place, PlaceStats, Tag
@@ -23,11 +23,9 @@ class PlaceRepository:
 
         stmt = (
             select(Place)
-            .join(Place.tags)
-            .outerjoin(PlaceStats)
             .options(
-                joinedload(Place.tags),
-                joinedload(Place.stats),
+                selectinload(Place.tags),
+                selectinload(Place.stats),
             )
             .where(Place.status == status)
         )
@@ -41,42 +39,42 @@ class PlaceRepository:
         if include_tags:
             stmt = (
                 stmt
+                .join(Place.tags)
                 .where(Tag.name.in_(include_tags))
-                .group_by(Place.id, PlaceStats.rating_avg)
+                .group_by(Place.id)
                 .having(func.count(func.distinct(Tag.id)) == len(include_tags))
             )
-        
 
-        stmt = stmt.options(joinedload(Place.tags), joinedload(Place.stats))
+        places = self.db.execute(stmt).scalars().all()
 
+        result: list[dict] = []
 
-        return self.db.scalars(stmt).unique().all()
-    
+        for place in places:
+            stats = place.stats
 
-    def exists_active(
-            self,
-            place_id: int
-    ) -> bool:
-        return self.db.scalar(select(select(Place.id).where(Place.id == place_id).exists()))
-    
+            result.append(
+                {
+                    "id": place.id,
+                    "name": place.name,
+                    "description": place.description,
+                    "city": place.city,
+                    "address_text": place.address_text,
+                    "price_level": place.price_level,
+                    "status": place.status,
+                    "created_at": place.created_at,
+                    "updated_at": place.updated_at,
+                    "tags": [tag.name for tag in place.tags],
+                    "stats": {
+                        "rating_avg": stats.rating_avg if stats else None,
+                        "rating_cnt": stats.rating_cnt if stats else 0,
+                        "reviews_cnt": stats.reviews_cnt if stats else 0,
+                        "updated_at": stats.updated_at if stats else None,
+                    },
+                }
+            )
 
-    def save(self, place: PlaceEntity) -> int:
-        place_model = PlaceModel(
-            name=place.name,
-            description=place.description,
-            city=place.city,
-            address_text=place.address_text,
-            price_level=place.price_level,
-            status=place.status.value if place.status else "pending",
-            created_by=place.created_by,
-            created_at=place.created_at,
-        )
+        return result
 
-        self.db.add(place_model)
-        self.db.commit()
-        self.db.refresh(place_model)
-
-        return place_model.id
     
     def search(self, filters: dict) -> list[Place]:
         return self.__search_places(
@@ -87,3 +85,31 @@ class PlaceRepository:
     
     def get_by_id(self, place_id: int) -> Place:
         return self.db.query(Place).filter_by(id=place_id).first()
+    
+    def add_tags(self, place_id: int, tags_ids: list[int]) -> Place:
+        place = self.db.get(Place, place_id)
+
+        if not tags_ids:
+            return place
+
+        # Получаем существующие теги
+        tags = (
+            self.db.execute(
+                select(Tag).where(Tag.id.in_(tags_ids))
+            )
+            .scalars()
+            .all()
+        )
+
+        # Добавляем только те теги, которых ещё нет у места
+        existing_tag_ids = {tag.id for tag in place.tags}
+
+        for tag in tags:
+            if tag.id not in existing_tag_ids:
+                place.tags.append(tag)
+
+        self.db.add(place)
+        self.db.commit()
+        self.db.refresh(place)
+
+        return place

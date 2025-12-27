@@ -40,15 +40,12 @@ class TagService:
     
     def get_all_tags(self) -> list[TagEntity]:
         dd = self.tag_repo.get_all()
-        print(dd)
         return dd
 
     def get_by_name(self, name: str) -> TagEntity:
         dd = self.tag_repo.get_by_name(name)
-        print(dd)
         return dd
 
     def get_by_id(self, id: int) -> TagEntity:
         dd = self.tag_repo.get_by_id(id)
-        print(dd)
         return dd

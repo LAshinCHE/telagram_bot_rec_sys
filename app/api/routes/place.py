@@ -7,6 +7,8 @@ from app.api.schemas.place import (
     CreatePlaceResponce,
     GetPlaceRequest,
     GetPlaceResponce,
+    AddPlaceTagRequest,
+    AddPlaceTagResponse,
 )
 
 from app.service.use_cases.place.place import PlaceService
@@ -51,10 +53,6 @@ def recommend_places(
     responce = CreatePlaceResponce(id=place_id)
     return responce
 
-from fastapi import APIRouter, Depends, HTTPException
-
-router = APIRouter()
-
 @router.get("/{place_id}", response_model=GetPlaceResponce)
 def get_place_by_id(
     place_id: int,
@@ -62,7 +60,6 @@ def get_place_by_id(
     service: PlaceService = Depends(get_place_service),
 ):
     place = service.get_place(place_id)
-
     responce = GetPlaceResponce(
             id=place.id,
             name=place.name,
@@ -73,3 +70,13 @@ def get_place_by_id(
     )
 
     return responce
+
+ 
+@router.post("/add_tags", response_model=AddPlaceTagResponse)
+def add_tags(
+    data: AddPlaceTagRequest,
+    user_id: int,
+    service: PlaceService = Depends(get_place_service),
+):
+    
+    return service.add_tags(data.place_id, data.list_tags_id)

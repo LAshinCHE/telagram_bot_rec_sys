@@ -32,8 +32,8 @@ class Recommendation:
                     'price_level': place['price_level'],
                     'city': place['city'],
                     'predicted_rating': None,
-                    'rating_avg': place['rating_avg'],
-                    'rating_cnt': place['rating_cnt']
+                    'rating_avg': place['stats']['rating_avg'],
+                    'rating_cnt': place['stats']['rating_cnt']
                 }
                 for place in candidates
             ]

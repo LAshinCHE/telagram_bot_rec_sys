@@ -25,7 +25,6 @@ class TagRepository(TagRepositoryI):
                 name=i.name
             )
             our_tags.append(tag)
-        print(all_tags)
         if not all_tags:
             return None
 

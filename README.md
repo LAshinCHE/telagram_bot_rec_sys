@@ -2,6 +2,8 @@
 ---
 Places Recommendation System - телеграмм бот для поиска мест, чтобы провести свой досуг
 
+Пример работы бота:
+![alt text](template/image.png)
 
 
 Система позволяет:

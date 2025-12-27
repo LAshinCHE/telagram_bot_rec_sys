@@ -1,5 +1,6 @@
 from app.service.interfaces.repositories.place_repo import PlaceRepositoryI
 from app.domain.entities.place import Place
+from app.db.models.place import Place as PlaceModel
 from app.exceptions.exceptions import NotFound, Forbidden
 
 class PlaceService:
@@ -34,3 +35,7 @@ class PlaceService:
 
         place.approve()
         return self.place_repo.save(place)
+    
+    def add_tags(self, place_id: int, tags_ids: list[int]) -> PlaceModel:
+        place = self.place_repo.add_tags(place_id, tags_ids)
+        return place
