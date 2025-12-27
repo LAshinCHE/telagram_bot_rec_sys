@@ -11,6 +11,7 @@ from app.recommendation.recommendation_service import Recommendation
 from app.service.use_cases.llm.recommendation import RecommendationService
 from app.db.session import get_db
 from app.db.repositories.place import PlaceRepository
+from app.db.repositories.tag import TagRepository
 from app.llm.llm_entities import LLM_Entities
 from app.llm.llm_generation_answer import LLM_Generation
 from app.settings import settings
@@ -23,10 +24,18 @@ def get_recommendation_service(
 ) -> RecommendationService:
     place_repo = PlaceRepository(db)
 
+    # 1. Инициализируем репозиторий тегов и получаем список имен
+    tag_repo = TagRepository(db)
+    all_tags_entities = tag_repo.get_all()
+
+    allowed_tags = [tag.name for tag in all_tags_entities] if all_tags_entities else []
+
+    print(allowed_tags)
+
     llm = LLM_Entities(
         LM_STUDIO_URL=settings.LM_STUDIO_URL,
         API_KEY=settings.API_KEY,
-        ALLOWED_TAGS=settings.ALLOWED_TAGS,
+        ALLOWED_TAGS=allowed_tags,
         DEFAULT_MODEL=settings.DEFAULT_MODEL,
     )
 
