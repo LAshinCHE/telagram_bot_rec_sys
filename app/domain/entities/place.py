@@ -6,11 +6,13 @@ from app.domain.enum import PlaceStatus
 class Place:
     id: int | None
     name: str
+    description: str
     city: str 
+    address_text: str
     price_level: int
-    status: PlaceStatus
+    status: PlaceStatus | None
     created_by: int
-    created_at: datetime
+    created_at: datetime | None
 
     def approve(self):
         self.status = PlaceStatus.ACTIVE

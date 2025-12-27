@@ -1,5 +1,6 @@
 from sqlalchemy.orm import Session, joinedload
 from sqlalchemy import select, func
+from app.db.models import Place as PlaceModel
 from app.db.models.place import Place, PlaceStats, Tag
 from app.domain.entities.place import Place as PlaceEntity
 
@@ -36,25 +37,37 @@ class PlaceRepository:
                 .having(func.count(func.distinct(Tag.id)) == len(include_tags))
             )
         
-        # Подгружаем связанные данные (stats и tags)
+
         stmt = stmt.options(joinedload(Place.tags), joinedload(Place.stats))
 
-        # unique() обязателен при joinedload коллекций (tags)
+
         return self.db.scalars(stmt).unique().all()
     
-    # проверка существования места
+
     def exists_active(
             self,
             place_id: int
     ) -> bool:
         return self.db.scalar(select(select(Place.id).where(Place.id == place_id).exists()))
     
-    def save(self, place: PlaceEntity):
-        db_place = Place(**place.model_dump())
-        self.db.add(db_place)
+
+    def save(self, place: PlaceEntity) -> int:
+        place_model = PlaceModel(
+            name=place.name,
+            description=place.description,
+            city=place.city,
+            address_text=place.address_text,
+            price_level=place.price_level,
+            status=place.status.value if place.status else "pending",
+            created_by=place.created_by,
+            created_at=place.created_at,
+        )
+
+        self.db.add(place_model)
         self.db.commit()
-        self.db.refresh(db_place)
-        return db_place
+        self.db.refresh(place_model)
+
+        return place_model.id
     
     def search(self, filters: dict) -> list[Place]:
         return self.__search_places(

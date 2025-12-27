@@ -4,7 +4,7 @@ from app.domain.entities.place import Place
 class PlaceRepositoryI(ABC):
 
     @abstractmethod
-    def save(self, place: Place) -> Place:
+    def save(self, place: Place) -> int:
         pass
 
     @abstractmethod
