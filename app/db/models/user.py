@@ -16,15 +16,3 @@ class User(Base):
 
     role = mapped_column(String(20), nullable=False, default=UserRole.USER)
 
-
-
-class UserRole(Base):
-    __tablename__ = "user_roles"
-
-    user_id: Mapped[int] = mapped_column(
-        ForeignKey("users.id", ondelete="CASCADE"), primary_key=True
-    )
-    role: Mapped[str] = mapped_column(primary_key=True)
-
-    user = relationship("User", back_populates="roles")
-

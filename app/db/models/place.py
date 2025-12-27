@@ -22,7 +22,6 @@ class Place(Base):
         )
 
     tags = relationship("Tag", secondary="place_tags", back_populates="places")
-    photos = relationship("PlacePhoto", cascade="all, delete")
     stats = relationship("PlaceStats", uselist=False)
 
 

@@ -41,6 +41,7 @@ class RecommendationService:
     
     def recommend(self, user_query: str, user_id : int) -> dict:
         filters = self.llm_entities.extract_filters_openai(user_query)
+        print(filters)
 
         places = self.place_repo.search_places(
             city=filters["city"],
@@ -48,11 +49,12 @@ class RecommendationService:
             include_tags=filters["selected_tags"],
         )
 
-        candidates = self.place_repo.make_
 
-        ranked = self.recommendation.rank_places(user_id, places)
+        # ranked = self.recommendation.rank_places(user_id, places)
+        ranked = self.recommendation.rank_places(user_id, places, 0)
 
         ans = self.generation_llm.generation(ranked)
+        print(ans)
 
         return ans
 

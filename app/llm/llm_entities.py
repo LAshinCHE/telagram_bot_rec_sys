@@ -148,7 +148,7 @@ class LLM_Entities:
         *,
         client: OpenAI | None = None,
         model: str | None = None,
-        temperature: float = 0.0,
+        temperature: float = 0.7,
     ) -> Dict[str, Any]:
         if client is None:
             client = OpenAI(base_url=self.LM_STUDIO_URL, api_key=self.API_KEY)
@@ -224,8 +224,7 @@ if __name__ == "__main__":
     )
 
     example_query = (
-        "Хочу уютную кофейню, чтобы можно было поработать с ноутбуком, тихо, и недорого. "
-        "Не бар. В Москве."
+        "Хочу уютную кофейню, чтобы можно было поработать с ноутбуком, тихо, и недорого. Не бар. В Москве."
     )
     result = entities.extract_filters_openai(example_query)
     print(json.dumps(result, ensure_ascii=False, indent=2))

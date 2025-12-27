@@ -19,5 +19,6 @@ class PlaceResponse(BaseModel):
 
 
 class RecommendationResponse(BaseModel):
-    filters: dict
+    # filters: dict
     places: List[PlaceResponse]
+    answer: str

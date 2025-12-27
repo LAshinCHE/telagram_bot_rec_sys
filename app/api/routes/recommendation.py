@@ -32,7 +32,7 @@ def get_recommendation_service(
 
     recommendation_repo = ReviewRepository(db)
 
-    recommendation = Recommendation("default.pkl")
+    recommendation = Recommendation("svd_model.pkl")
 
     generation_llm = LLM_Generation(LM_STUDIO_URL=settings.LM_STUDIO_URL,
                                     API_KEY=settings.API_KEY,

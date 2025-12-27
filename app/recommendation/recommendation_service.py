@@ -10,6 +10,7 @@ from app.domain.entities.place import Place
 
 class Recommendation:
     def __init__(self, name_model: str):
+        self.name_model = name_model
         self.model = joblib.load(name_model)
     
     def __predict_rating(self, user_id: int, place_id: int) -> int:
@@ -76,13 +77,7 @@ class Recommendation:
         return ranked_places
         
 
-    def train_model(self, name_model: str, df):
-        '''
-        Docstring для train_model
-        :param name_model: название модели для сохранения и загрузки
-        :type name_model: str
-        :param df: данные для обучения модели
-        '''
+    def train_model(self, df):
 
 
         reader = Reader(rating_scale=(1, 5))
@@ -100,9 +95,10 @@ class Recommendation:
         predictions = model.test(testset)
         print(f"RMSE: {accuracy.rmse(predictions)}")
 
-        joblib.dump(model, name_model)
+        joblib.dump(model, self.name_model)
 
 if __name__ == "__main__":
+    # df = pd.read_csv("user_place_ratings_500.csv")
     # Пример кандидатов (мест)
     candidates = [
         {"id":"22222222-2222-2222-2222-222222222222","name":"Dessert House","description":"десерты и латте","city":"Moscow","price_level":3,"rating_avg":4.8,"rating_cnt":15},
@@ -118,8 +114,10 @@ if __name__ == "__main__":
     ]
     user_id = uuid.uuid4()
     model_name = 'svd_model.pkl'
-    rating_name = 'ratings_data.json'
-    rec = Recommendation(model_name, rating_name)
-    ranked_places = rec.rank_places(user_id, candidates, 2)
-    with open('Recomndation_output.json', 'w', encoding='utf-8') as f:
-        json.dump(ranked_places, f, ensure_ascii=False, indent=2)
+    rec = Recommendation(model_name)
+
+    # rec.train_model(df)
+
+    ranked_places = rec.rank_places(21, candidates, 5)
+    # with open('Recomndation_output.json', 'w', encoding='utf-8') as f:
+    #     json.dump(ranked_places, f, ensure_ascii=False, indent=2)
