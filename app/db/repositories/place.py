@@ -8,7 +8,7 @@ class PlaceRepository:
     def __init__(self, db: Session):
         self.db = db
 
-    def __search_places(
+    def search_places(
         self,
         city: str | None = None,
         price_level: int | None = None,
@@ -20,27 +20,34 @@ class PlaceRepository:
         include_tags — обязательные теги (AND логика)
         """
 
-        stmt = select(Place).outerjoin(Place.stats).where(Place.status == status)
+        stmt = (
+            select(Place)
+            .join(Place.tags)
+            .outerjoin(PlaceStats)
+            .options(
+                joinedload(Place.tags),
+                joinedload(Place.stats),
+            )
+            .where(Place.status == status)
+        )
 
         if city:
             stmt = stmt.where(Place.city == city)
+
         if price_level is not None:
             stmt = stmt.where(Place.price_level == price_level)
 
         if include_tags:
-            # Логика AND для тегов
             stmt = (
-                stmt.join(Place.tags)
+                stmt
                 .where(Tag.name.in_(include_tags))
-                .group_by(Place.id)
+                .group_by(Place.id, PlaceStats.rating_avg)
                 .having(func.count(func.distinct(Tag.id)) == len(include_tags))
             )
-        
-        # Подгружаем связанные данные (stats и tags)
-        stmt = stmt.options(joinedload(Place.tags), joinedload(Place.stats))
+        else:
+            stmt = stmt.group_by(Place.id, PlaceStats.rating_avg)
 
-        # unique() обязателен при joinedload коллекций (tags)
-        return self.db.scalars(stmt).unique().all()
+        return self.db.scalars(stmt).all()
     
     # проверка существования места
     def exists_active(
