@@ -1,22 +1,30 @@
-from app.db.models import *
-from app.db.database import engine, Base
+import asyncio
+
 from fastapi import FastAPI
+from aiogram import Bot, Dispatcher
+
 from app.api.router import api_router
-import uvicorn
+from app.bot.handlers import start
+from app.settings import settings
+from app.db.database import engine, Base
+
 
 app = FastAPI(title="Places API")
-
 app.include_router(api_router)
 
-print("Creating database tables...")
-Base.metadata.create_all(bind=engine)
-print("Database tables created!")
+@app.on_event("startup")
+async def startup_event():
+    print("Creating database tables...")
+    Base.metadata.create_all(bind=engine)
+    print("Database tables created!")
 
-if __name__ == "__main__":
-    print("Starting FastAPI server...")
-    uvicorn.run(
-        "main:app",           
-        host="0.0.0.0",       
-        port=8000,
-        reload=True          
-    )
+    print("Starting Telegram bot...")
+    asyncio.create_task(start_bot())
+
+
+async def start_bot():
+    bot = Bot(token=settings.BOT_TOKEN)
+    dp = Dispatcher()
+    dp.include_router(start.router)
+
+    await dp.start_polling(bot)
