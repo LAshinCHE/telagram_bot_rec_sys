@@ -9,9 +9,8 @@ from surprise.model_selection import train_test_split
 from app.domain.entities.place import Place
 
 class Recommendation:
-    def __init__(self, name_model: str, name_rating_json: str):
+    def __init__(self, name_model: str):
         self.model = joblib.load(name_model)
-        self.df = pd.read_json(name_rating_json)
     
     def __predict_rating(self, user_id: int, place_id: int) -> int:
         return self.model.predict(user_id, place_id).est
