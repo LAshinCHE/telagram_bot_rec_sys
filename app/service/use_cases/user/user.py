@@ -10,7 +10,6 @@ class UserService:
         return self.user_repo.get(user_id)
 
     def create_user(self, user_id: int, name: str, role: UserRole) -> UserEntity:
-        print(type(self.user_repo))
         return self.user_repo.add(
             id=user_id,
             name=name,

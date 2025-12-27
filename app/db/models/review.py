@@ -2,6 +2,7 @@ from sqlalchemy import ForeignKey, Integer, DateTime, text
 from sqlalchemy.orm import Mapped, mapped_column
 from datetime import datetime
 from app.db.database import Base
+from app.domain.enum import ReviewStatus
 
 
 class Rating(Base):
@@ -30,7 +31,7 @@ class Review(Base):
     author_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
     rating: Mapped[int]
     text: Mapped[str]
-    status: Mapped[str]
+    status: Mapped[ReviewStatus]
     moderated_by: Mapped[int | None]
     moderated_at: Mapped[datetime | None]
     created_at: Mapped[datetime] = mapped_column(default=datetime.utcnow)

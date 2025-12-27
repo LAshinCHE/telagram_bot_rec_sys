@@ -20,7 +20,6 @@ class UserRepository(UserRepositoryI):
         self.session.add(user_model)
         self.session.commit()
         self.session.refresh(user_model)
-
         return UserEntity(
             id=user_model.id,
             name=user_model.name,

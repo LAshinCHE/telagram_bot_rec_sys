@@ -1,21 +1,25 @@
 
-from domain.entities.review import Review
+from app.domain.entities.review import Review
 from app.domain.enum import ReviewStatus
 from app.exceptions.exceptions import BusinessError
+from datetime import datetime
+from app.db.repositories.reviews import ReviewRepository
+from app.db.repositories.place import PlaceRepository
+from app.db.repositories.plase_stats import PlaceStatsRepository
 
-class AddReviewUseCase:
+class ReviewService:
 
     def __init__(
         self,
-        review_repo,
-        place_repo,
-        place_stats_repo
+        review_repo: ReviewRepository,
+        place_repo: PlaceRepository,
+        place_stats_repo: PlaceStatsRepository
     ):
         self.review_repo = review_repo
         self.place_repo = place_repo
         self.place_stats_repo = place_stats_repo
 
-    def execute(self, dto, user):
+    def add_review(self, dto, user):
         # Check place
         if not self.place_repo.exists_active(dto.place_id):
             raise BusinessError("Place not found or inactive")
@@ -39,7 +43,7 @@ class AddReviewUseCase:
             created_at=datetime.utcnow()
         )
 
-        review = self.review_repo.save(review)
+        review = self.review_repo.add_review(review)
 
         if review.status == ReviewStatus.APPROVED:
             self.place_stats_repo.update_after_review(dto.place_id)

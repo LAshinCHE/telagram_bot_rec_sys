@@ -14,3 +14,7 @@ class PlaceRepositoryI(ABC):
     @abstractmethod
     def search(self, filters: dict) -> list[Place]:
         pass
+
+    @abstractmethod
+    def exists_active(self, place_id: int) -> bool:
+        pass

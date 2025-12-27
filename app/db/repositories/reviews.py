@@ -1,8 +1,9 @@
 from app.service.interfaces.repositories.review_repo import ReviewRepositoryI
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from app.db.models import Review as ReviewModel
 from app.domain.entities.review import Review as ReviewEntity
 from app.domain.enum import ReviewStatus
+from sqlalchemy import select, func
 
 class ReviewRepository(ReviewRepositoryI):
     def __init__(self, session: Session):
@@ -28,3 +29,29 @@ class ReviewRepository(ReviewRepositoryI):
             reviews.append(review)
 
         return reviews
+    
+    def exists_by_user(self, user_id: int, place_id: int) -> bool:
+        stmt = select(1).where(ReviewEntity.id == user_id).where(ReviewEntity.place_id == place_id).exists()
+        return self.db.scalar(stmt)
+    
+    def add_review(self, review: ReviewEntity) -> ReviewEntity:
+        self.session.add(review)
+        self.session.commit()
+        self.session.refresh(review)
+
+        review = self.session.query(review).filter_by(id=id).first()
+        return review
+
+    def get_reviews_for_place(self, place_id: int) -> list[ReviewEntity]:
+        pass
+
+    def moderate_review(self, review_id: int, moderator_id: int, status: ReviewStatus) -> ReviewEntity:
+        pass
+
+    def get_reviews_for_moderate(self):
+        pass
+
+    def get_count_rating_user(self, user_id: int):
+        pass
+
+

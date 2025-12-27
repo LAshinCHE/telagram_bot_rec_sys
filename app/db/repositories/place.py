@@ -47,3 +47,10 @@ class PlaceRepository:
             stmt = stmt.group_by(Place.id, PlaceStats.rating_avg)
 
         return self.db.scalars(stmt).all()
+    
+    def exists_active(
+            self,
+            place_id: int
+    ) -> bool:
+        stmt = select(1).where(Place.id == place_id).exists()
+        return self.db.scalar(stmt)
