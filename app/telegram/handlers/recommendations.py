@@ -1,6 +1,5 @@
 from aiogram import Router
 from aiogram.types import Message
-from app.core.settings import settings
 from app.api.routes.recommendation import recommend_places
 
 router = Router()
