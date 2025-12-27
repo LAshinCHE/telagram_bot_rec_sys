@@ -44,3 +44,4 @@ def get_user(
 
 ):
     return service.get_user(data.id)
+

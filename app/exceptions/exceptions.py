@@ -15,3 +15,6 @@ class NotFound(ApplicationError):
 class BusinessError(ApplicationError):
     """Объект не найден"""
     pass
+
+class NotFound(ApplicationError):
+    pass

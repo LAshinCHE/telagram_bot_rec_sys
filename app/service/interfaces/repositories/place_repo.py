@@ -18,3 +18,7 @@ class PlaceRepositoryI(ABC):
     @abstractmethod
     def exists_active(self, place_id: int) -> bool:
         pass
+
+    @abstractmethod
+    def get_by_id(self, place_id: int) -> Place:
+        pass

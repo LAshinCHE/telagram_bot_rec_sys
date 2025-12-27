@@ -17,3 +17,4 @@ class Place:
 
     def reject(self):
         self.status = PlaceStatus.REJECTED
+

@@ -4,7 +4,7 @@ from fastapi import FastAPI
 from aiogram import Bot, Dispatcher
 
 from app.api.router import api_router
-from app.bot.handlers import start
+from app.telegram.handlers import start
 from app.settings import settings
 from app.db.database import engine, Base
 
